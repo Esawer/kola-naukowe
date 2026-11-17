@@ -1,0 +1,168 @@
+{% extends "config/base.html" %}
+{% load static %}
+
+{% block title%}Wydarzenie{% endblock %}
+
+{% block content %}
+<main class="mx-auto flex w-full max-w-7xl flex-1 flex-col space-y-4 px-4 pt-1 pb-8 sm:px-6 sm:pt-2 sm:pb-10">
+
+    <!-- Powrót do listy -->
+    <a href="{% url 'home' %}#wydarzenia"
+       class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition-colors hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
+      <span>&larr;</span>
+      <span>Powrót do listy wydarzeń</span>
+    </a>
+
+    <div class="grid flex-1 grid-cols-1 gap-6 md:grid-cols-3">
+
+      <!-- LEWA KOLUMNA: O WYDARZENIU -->
+      <section class="rounded-2xl border border-t-4 border-slate-200 {{ activity.get_category_color }} bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800 md:col-span-2 sm:p-8">
+
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span class="inline-block rounded border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide {{ activity.club.club_badge }}">
+            {{ activity.club }}
+          </span>
+
+          <div class="flex flex-wrap items-center gap-2">
+            {% if activity.is_past %}
+              <span class="rounded-full border border-slate-300 bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-600 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                Wydarzenie zakończone
+              </span>
+            {% endif %}
+
+            {% if activity.limit <= activity.current_participants %}
+              <span class="rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                Brak wolnych miejsc
+              </span>
+            {% elif activity.occupancy_percent >= 75 %}
+              <span class="rounded-full border border-red-200 bg-red-50 px-2.5 py-0.5 text-[11px] font-semibold text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300">
+                Ostatnie miejsca ({{ activity.current_participants }} / {{ activity.limit }})
+              </span>
+            {% elif activity.occupancy_percent >= 50 %}
+              <span class="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[11px] font-semibold text-amber-700 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-300">
+                {{ activity.current_participants }} / {{ activity.limit }} miejsc
+              </span>
+            {% else %}
+              <span class="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-300">
+                {{ activity.current_participants }} / {{ activity.limit }} miejsc
+              </span>
+            {% endif %}
+          </div>
+        </div>
+
+        <h1 class="mt-4 text-2xl font-black leading-tight tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
+          {{ activity.get_category_display }} - {{ activity.name }}
+        </h1>
+
+        <p class="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300 sm:text-base">
+          {{ activity.desc }}
+        </p>
+
+        <!-- Parametry spotkania -->
+        <div class="mt-6 space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm dark:border-slate-700 dark:bg-slate-900/50">
+          <div class="flex justify-between gap-4">
+            <span class="text-slate-500 dark:text-slate-400">Termin:</span>
+            <span class="text-right font-semibold text-slate-900 dark:text-slate-100">{{ activity.date }}</span>
+          </div>
+          <div class="flex justify-between gap-4">
+            <span class="text-slate-500 dark:text-slate-400">Lokalizacja:</span>
+            <span class="text-right font-semibold text-slate-900 dark:text-slate-100">{{ activity.location }}</span>
+          </div>
+          <div class="flex justify-between gap-4">
+            <span class="text-slate-500 dark:text-slate-400">Prowadzący:</span>
+            <span class="text-right font-semibold text-slate-900 dark:text-slate-100">{{ activity.custodian }}</span>
+          </div>
+        </div>
+
+        {% if activity.additional_info %}
+          <div class="mt-6 border-l-2 border-blue-500 pl-4 text-sm dark:border-blue-400">
+            <p class="font-semibold text-slate-900 dark:text-slate-100">Informacje dodatkowe</p>
+            <p class="mt-1 leading-relaxed text-slate-600 dark:text-slate-300">{{ activity.additional_info }}</p>
+          </div>
+        {% endif %}
+      </section>
+
+      <!-- PRAWA KOLUMNA: FORMULARZ ZAPISU -->
+      <aside class="h-full rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+
+        <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">Formularz zapisu</h2>
+
+        {% if activity.is_full or activity.is_past %}
+          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Zapisy na to wydarzenie są zamknięte.</p>
+        {% else %}
+          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Wypełnij dane, aby zarezerwować miejsce.</p>
+        {% endif %}
+
+        {% if signed_up %}
+          <div class="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm font-semibold text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-300">
+            Zapis przyjęty. Potwierdzenie poszło na podany adres e-mail.
+          </div>
+        {% elif send_error %}
+          <div class="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300">
+            Nie udało się wysłać potwierdzenia. Spróbuj ponownie za chwilę.
+          </div>
+        {% endif %}
+
+        <form method="post" class="mt-5 space-y-4">
+          {% csrf_token %}
+
+            <div>
+              <label for="signup-name" class="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">Imię i nazwisko</label>
+              <input
+                type="text"
+                id="signup-name"
+                name="name"
+                placeholder="np. Anna Nowak"
+                required
+                class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500"
+              >
+            </div>
+
+            <div>
+              <label for="signup-email" class="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">Adres e-mail</label>
+              <input
+                type="email"
+                id="signup-email"
+                name="email"
+                placeholder="np. anna.nowak@student.edu.pl"
+                required
+                class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500"
+              >
+            </div>
+
+            <div class="flex items-start gap-2.5">
+              <input
+                type="checkbox"
+                id="consent"
+                name="consent"
+                value="1"
+                required
+                class="mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-900"
+              >
+              <div class="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+                <label for="consent" class="cursor-pointer">
+                  Wyrażam zgodę na przetwarzanie danych i oświadczam, że zapoznałem się z:
+                </label>
+                <a href="{% url 'tos' %}" class="font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">Regulaminem</a>
+                i
+                <a href="{% url 'privacy' %}" class="font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">Polityką prywatności</a>.
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="w-full rounded-lg px-5 py-2.5 text-sm font-bold transition-colors
+                     {% if activity.is_full or activity.is_past %}cursor-not-allowed bg-slate-200 text-slate-400 dark:bg-slate-700 dark:text-slate-500{% else %}cursor-pointer bg-blue-600 text-white hover:bg-blue-500{% endif %}"
+              {% if activity.is_full or activity.is_past %}disabled{% endif %}
+            >
+              {% if activity.is_past %}Wydarzenie już się odbyło{% elif activity.is_full %}Brak miejsc{% else %}Zapisz się{% endif %}
+            </button>
+          </form>
+
+      </aside>
+
+    </div>
+
+  </main>
+
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "config/base.html" %}
+{% load static %}
+
+{% block title%}O nas{% endblock %}
+
+{% block content %}
+<main class="mx-auto w-full max-w-7xl flex-1 space-y-10 px-4 pt-4 pb-10 sm:px-6 sm:pt-6 lg:px-8">
+
+  <header class="max-w-3xl">
+    <span class="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">O inicjatywie</span>
+    <h1 class="mt-2 text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
+      Portal wydarzeń kół naukowych
+    </h1>
+    <p class="mt-4 text-base leading-relaxed text-slate-600 dark:text-slate-300">
+      Zbieramy w jednym miejscu spotkania, warsztaty, wykłady i wycieczki organizowane przez studenckie koła naukowe.
+      Zamiast szukać ogłoszeń po grupach i tablicach, sprawdzasz jeden terminarz i zapisujesz się w dwóch kliknięciach.
+    </p>
+    <p class="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">
+      Udział jest bezpłatny dla wszystkich studentów, niezależnie od kierunku i roku studiów.
+    </p>
+  </header>
+
+  <!-- Jak to działa -->
+  <section class="grid gap-4 sm:grid-cols-3">
+    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <div class="text-sm font-bold text-slate-900 dark:text-slate-100">1. Wybierz wydarzenie</div>
+      <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+        Filtruj po typie spotkania i sprawdzaj, ile miejsc zostało. Daty i lokalizacje są aktualizowane na bieżąco.
+      </p>
+    </div>
+    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <div class="text-sm font-bold text-slate-900 dark:text-slate-100">2. Zapisz się</div>
+      <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+        Wypełnij krótki formularz na stronie wydarzenia. Potwierdzenie trafia od razu na podany adres e-mail.
+      </p>
+    </div>
+    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <div class="text-sm font-bold text-slate-900 dark:text-slate-100">3. Przyjdź</div>
+      <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+        Sprzęt i materiały zapewnia organizator. Jeśli plan się zmieni, wystarczy jedna wiadomość, żeby zwolnić miejsce.
+      </p>
+    </div>
+  </section>
+
+  <!-- Koła w portalu -->
+  <section>
+    <h2 class="text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
+      Koła w portalu
+    </h2>
+    <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+      Osiem kół naukowych i sekcji projektowych, każdą poznasz po kolorze odznaki.
+    </p>
+
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {% for club in clubs %}
+        <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+          <span class="inline-block rounded border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide {{ club.club_badge }}">
+            {{ club.name }}
+          </span>
+          <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+            {{ club.desc }}
+          </p>
+          <p class="mt-3 text-xs font-medium text-slate-500 dark:text-slate-400">
+            Opiekun: {{ club.leader }}
+          </p>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center dark:border-slate-700 dark:bg-slate-900/50 sm:p-8">
+    <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Masz pytanie albo pomysł na wydarzenie?</h2>
+    <p class="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+      Napisz do nas przez formularz kontaktowy albo zajrzyj do najczęstszych pytań. Chętnie pomożemy też, jeśli chcesz założyć nowe koło.
+    </p>
+    <div class="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
+      <a href="{% url 'home' %}#kontakt"
+         class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-blue-500">
+        Napisz do nas
+      </a>
+      <a href="{% url 'faq' %}"
+         class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-6 py-2.5 text-sm font-bold text-slate-700 transition-colors hover:text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:text-white">
+        Pytania i odpowiedzi
+      </a>
+    </div>
+  </section>
+
+</main>
+{% endblock %}
