@@ -3,13 +3,13 @@ from django.core.mail import send_mail
 from django.utils.html import escape
 
 
-def send_email(mail, name):
+def send_email(mail, name): # wysyłka e-maila na adres e-mail użytkownika.
     send_mail(
-        subject="Twój zapis",
-        message=f"Gratulację {name} zapisu na wydarzenie koła, widzimy się niedługo!",
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[mail],
-        html_message=f"<strong>Gratulację {escape(name)} zapisu na wydarzenie koła, widzimy się niedługo!</strong>",
+        subject="Twój zapis", # tytuł e-maila
+        message=f"Gratulację {name} zapisu na wydarzenie koła, widzimy się niedługo!", # wiadomość jako tekst
+        from_email=settings.DEFAULT_FROM_EMAIL, # nadawca
+        recipient_list=[mail], # odbiorca
+        html_message=f"<strong>Gratulację {escape(name)} zapisu na wydarzenie koła, widzimy się niedługo!</strong>", # wiadomość jako html
     )
 
 
